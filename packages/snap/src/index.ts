@@ -1,5 +1,17 @@
-import { OnRpcRequestHandler } from '@metamask/snaps-types';
-import { panel, text } from '@metamask/snaps-ui';
+import { OnRpcRequestHandler, OnTransactionHandler } from '@metamask/snaps-types';
+import { heading, panel, text } from '@metamask/snaps-ui';
+
+// Handle outgoing transactions.
+export const onTransaction: OnTransactionHandler = async ({ transaction }) => {
+
+  // Display percentage of gas fees in the transaction insights UI.
+  return {
+    content: panel([
+      heading('Cross-Chain Insights'),
+      text('what a cool transaction :^)'),
+    ]),
+  };
+};
 
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
@@ -17,10 +29,10 @@ export const onRpcRequest: OnRpcRequestHandler = ({ origin, request }) => {
       return snap.request({
         method: 'snap_dialog',
         params: {
-          type: 'confirmation',
+          type: 'alert',
           content: panel([
             text(`Hello, **${origin}**!`),
-            text('This custom confirmation is just for display purposes.'),
+            text('This custom alert is just for display purposes.'),
             text(
               'But you can edit the snap source code to make it do something, if you want to!',
             ),

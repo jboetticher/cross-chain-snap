@@ -13,7 +13,10 @@ import {
   ReconnectButton,
   SendHelloButton,
   Card,
+  SendCrossChainTxButton
 } from '../components';
+import { BrowserProvider, Contract, parseEther } from 'ethers';
+import contractABI from '../config/contractABI';
 
 const Container = styled.div`
   display: flex;
@@ -126,14 +129,22 @@ const Index = () => {
     }
   };
 
+  const handleCrossChainClick = async () => {
+    try {
+        let wallet = await (new BrowserProvider(window.ethereum)).getSigner();
+        let incrementerWRITE = new Contract('0x12cD3098a65965857ba33c0f72622E899Eaaf953', contractABI, wallet);
+        await incrementerWRITE.increment('0x12cD3098a65965857ba33c0f72622E899Eaaf953', { value: parseEther("0.1") });
+    } catch (e) {
+      console.error(e);
+      dispatch({ type: MetamaskActions.SetError, payload: e });
+    }
+  }
+
   return (
     <Container>
       <Heading>
-        Welcome to <Span>template-snap</Span>
+        Welcome to <Span>cross-chain-snap</Span>
       </Heading>
-      <Subtitle>
-        Get started by editing <code>src/index.ts</code>
-      </Subtitle>
       <CardContainer>
         {state.error && (
           <ErrorMessage>
@@ -183,7 +194,7 @@ const Index = () => {
             disabled={!state.installedSnap}
           />
         )}
-        <Card
+        {/* <Card
           content={{
             title: 'Send Hello message',
             description:
@@ -196,11 +207,20 @@ const Index = () => {
             ),
           }}
           disabled={!state.installedSnap}
-          fullWidth={
-            state.isFlask &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
+        /> */}
+        <Card
+          content={{
+            title: 'Send Cross-Chain Tx',
+            description:
+              'Sends a cross chain increment transaction.',
+            button: (
+              <SendCrossChainTxButton
+                onClick={handleCrossChainClick}
+                disabled={!state.installedSnap}
+              />
+            ),
+          }}
+          disabled={!state.installedSnap}
         />
         <Notice>
           <p>
